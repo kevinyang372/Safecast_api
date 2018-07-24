@@ -57,7 +57,7 @@ def export_to_file():
             result_csv.append([t.id, k1[0], k1[1], k1[2], k1[3], 1])
         for k2 in t.disproved_by:
             result_csv.append([t.id, k2[0], k2[1], k2[2], k2[3], 0])
-    with open('/Users/kevin/Desktop/Datas/Safecast/result.csv', 'w') as myfile:
+    with open('/home/ec2-user/result.csv', 'w') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(['id','verifiedby','lat','lng','ratio','result'])
         wr.writerows(result_csv)
