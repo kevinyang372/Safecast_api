@@ -1,4 +1,3 @@
-import os
 import numpy as np
 import pandas as pd
 import json
@@ -29,9 +28,7 @@ def prediction_IsolationForest(points, neighbors):
   return clf.decision_function(points)
 
 def local_mean(value, neighbors):
-  k = float(np.abs(value - np.mean(neighbors))) / value
-  # if k > 1:
-  #   print(neighbors)
+  k = float(np.mean(neighbors)) / value
   return k
 
 def predict(travel_data):
@@ -49,6 +46,7 @@ def predict(travel_data):
 
   hist_eva = []
   iterations = int(len(travel)/10)
+  decision = []
 
   one_travel_eva = test_point_in_one_travel(locx,locy,value)
 
@@ -58,9 +56,19 @@ def predict(travel_data):
       if neighbors == [] or neighbors == None:
           continue
       #hist_eva.append(self.prediction_IsolationForest([travel[i]],neighbors))
-      hist_eva.append(local_mean(value[i],neighbors))
+      ratio = local_mean(value[i],neighbors)
+      if ratio > 0.5 and ratio < 2:
+        decision.append("approved")
+      else:
+        decision.append("disproved")
+      hist_eva.append(ratio)
 
-  return {"result": hist_eva, "fluctuation": one_travel_eva}
+  highly_fluctuated_point = []
+  for i in one_travel_eva:
+    highly_fluctuated_point.append({"Latitude": travel[i][0], "Longitude": travel[i][1], "Value": travel[i][2]})
+
+
+  return {"result": decision, "fluctuation": highly_fluctuated_point, "ratio": hist_eva}
 
 def test_point_in_one_travel(locx, locy, value):
 
