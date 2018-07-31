@@ -37,6 +37,8 @@ def predict(travel_data):
   locx = []
   locy = []
   value = []
+  user = travel_data[0]["User"]
+  drive = travel_data[0]["Drive"]
 
   for i in range(len(travel_data)):
       travel.append([float(travel_data[i]["Latitude"]),float(travel_data[i]["Longitude"]),float(travel_data[i]["Value"])])
@@ -58,9 +60,9 @@ def predict(travel_data):
       #hist_eva.append(self.prediction_IsolationForest([travel[i]],neighbors))
       ratio = local_mean(value[i],neighbors)
       if ratio > 0.5 and ratio < 2:
-        decision.append("approved")
+        decision.append(1)
       else:
-        decision.append("disproved")
+        decision.append(0)
       hist_eva.append(ratio)
 
   highly_fluctuated_point = []
@@ -68,7 +70,7 @@ def predict(travel_data):
     highly_fluctuated_point.append({"Latitude": travel[i][0], "Longitude": travel[i][1], "Value": travel[i][2]})
 
 
-  return {"result": decision, "fluctuation": highly_fluctuated_point, "ratio": hist_eva}
+  return {"user": user, "drive": drive, "latitude": locx, "longitude": locy, "result": decision, "fluctuation": highly_fluctuated_point, "ratio": hist_eva, "value": value}
 
 def test_point_in_one_travel(locx, locy, value):
 

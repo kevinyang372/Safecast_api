@@ -14,7 +14,7 @@ def get_credibility_users(users, ids, results):
                 if int(t) == ids[num]:
                     if results[num] == 1:
                         num_approved += 1
-                    else
+                    else:
                         num_disproved += 1
             
             json_list.append({'user': t, 'approved': str(num_approved), 'disproved': str(num_disproved)})
