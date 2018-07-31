@@ -46,7 +46,29 @@ class User(Resource):
 
 class Trip(Resource):
     def get(self):
-      return {"algorithm": "local mean"}
+      get_request = request.get_json()
+
+      user_id = 0
+      drive_id = 0
+
+      if "user" in get_request.keys():
+        user_id = get_request["user"]
+
+      if "drive" in get_request.keys():
+        drive_id = get_request["drive"]
+
+      cur = mysql.connect().cursor()
+      if user_id == 0 and drive_id != 0:
+        cur.execute("SELECT user_id, drive_id, approved, disproved FROM summary WHERE drive_id = %s", drive_id)
+      elif user_id != 0 and drive_id == 0:
+        cur.execute("SELECT user_id, drive_id, approved, disproved FROM summary WHERE user_id = %s", user_id)
+      elif user_id != 0 and drive_id != 0:
+        cur.execute("SELECT user_id, drive_id, approved, disproved FROM summary WHERE user_id = %s AND drive_id = %s", (user_id,drive_id))
+
+      response = []
+      for i in cur.fetchall():
+        response.append({'user_id': str(i[0]), 'drive_id': str(i[1]), 'approved': str(i[2]), 'disproved': str(i[3])})
+      return response
 
     def post(self):
       travel_data = request.get_json()
