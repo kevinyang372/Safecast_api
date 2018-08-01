@@ -11,10 +11,11 @@ api = Api(application)
 mysql = MySQL()
 
 # MySQL configurations
-application.config['MYSQL_DATABASE_USER'] = os.environ['RAILS_DATABASE_USERNAME']
-application.config['MYSQL_DATABASE_PASSWORD'] = os.environ['RAILS_DATABASE_PASSWORD']
-application.config['MYSQL_DATABASE_DB'] = 'Safecast'
-application.config['MYSQL_DATABASE_HOST'] = 'localhost'
+application.config['MYSQL_DATABASE_USER'] = os.environ['AWS_DATABASE_USERNAME']
+application.config['MYSQL_DATABASE_PASSWORD'] = os.environ['AWS_DATABASE_PASSWORD']
+application.config['MYSQL_DATABASE_DB'] = 'safecast'
+application.config['MYSQL_DATABASE_HOST'] = 'safecast.cikwfffwrotj.us-east-2.rds.amazonaws.com'
+application.config['MYSQL_DATABASE_PORT'] = 3306
 
 mysql.init_app(application)
 
