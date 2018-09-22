@@ -167,6 +167,7 @@ class Blackjack(Resource):
           this_player_hand, this_dealer_hand, this_player_deck, this_dealer_deck, ph_data, dh_data, pd_data, dd_data = reset_game(name)
 
           cur.execute("INSERT INTO player_data (player_hand, dealer_hand, player_deck, dealer_deck, name) VALUES (%s, %s, %s, %s, %s)", (ph_data, dh_data, pd_data, dd_data, name))
+          cur.execute("INSERT INTO leaderboard (name, points) VALUES (%s, %s)", (name, 500))
 
           c.commit()
           cur.close()
@@ -196,8 +197,10 @@ class Blackjack(Resource):
                 json_result = {'result': 'Stand-off!'}
               else:
                 json_result = {'result': 'Blackjack!'}
+                cur.execute("UPDATE leaderboard SET points = points + 150 WHERE name = %s",(name))
             elif sum_blackjack(this_player_hand) > 21:
               json_result = {'result': 'Busted!'}
+              cur.execute("UPDATE leaderboard SET points = points - 100 WHERE name = %s",(name))
 
             this_player_hand, this_dealer_hand, this_player_deck, this_dealer_deck, ph_data, dh_data, pd_data, dd_data = reset_game(name)
             cur.execute("UPDATE player_data SET player_hand = %s, player_deck = %s, dealer_hand = %s, dealer_deck = %s WHERE name= %s", (ph_data, pd_data, dh_data, dd_data, name))
@@ -247,10 +250,13 @@ class Blackjack(Resource):
 
           if sum_blackjack(this_dealer_hand) > 21:
             json_result =  {'result': 'You Win', 'dealer_hand': translated_dealer_hand, 'player_hand': translated_player_hand}
-          elif sum_blackjack(this_dealer_hand) < sum_blackjack(this_player_hand):
+            cur.execute("UPDATE leaderboard SET points = points + 100 WHERE name = %s",(name))
+          elif sum_blackjack(this_dealer_hand) <= sum_blackjack(this_player_hand):
             json_result =  {'result': 'You Win', 'dealer_hand': translated_dealer_hand, 'player_hand': translated_player_hand}
+            cur.execute("UPDATE leaderboard SET points = points + 100 WHERE name = %s",(name))
           else:
             json_result =  {'result': 'You Lose', 'dealer_hand': translated_dealer_hand, 'player_hand': translated_player_hand}
+            cur.execute("UPDATE leaderboard SET points = points - 100 WHERE name = %s",(name))
 
           this_player_hand, this_dealer_hand, this_player_deck, this_dealer_deck, ph_data, dh_data, pd_data, dd_data = reset_game(name)
           cur.execute("UPDATE player_data SET player_hand = %s, player_deck = %s, dealer_hand = %s, dealer_deck = %s WHERE name= %s", (ph_data, pd_data, dh_data, dd_data, name))
