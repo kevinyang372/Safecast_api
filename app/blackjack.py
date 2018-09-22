@@ -29,5 +29,5 @@ def sum_blackjack(cards):
         if sums > 11:
             sums += 1
         else:
-            sums += 10
+            sums += 11
     return sums
